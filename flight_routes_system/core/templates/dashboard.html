@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Airport Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4"> Dashboard</h2>
+<div class="nav nav-pills flex-column flex-sm-row">
+   
+    <a class="flex-sm-fill text-sm-center nav-link bg-info text-white mb-2" href="{% url 'manage_airport' %}">View All Airports</a>
+</div>
+{% endblock %}

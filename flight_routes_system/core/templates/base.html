@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Airport Management{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand"
+                href="{% if request.user.is_authenticated %}
+                            {% if request.user.role == 'admin' %}
+                                {% url 'admin_dashboard' %}
+                            {% elif request.user.role == 'superadmin' %}
+                                {% url 'superadmin_dashboard' %}
+                            {% else %}
+                                /
+                            {% endif %}
+                        {% else %}
+                            /
+                        {% endif %}">
+                    Airport Management
+                </a>
+            <!-- <div class="d-flex align-items-center gap-2">
+                {% if request.user.is_authenticated and request.path != '/login/' %}
+                    <span class="badge 
+                        {% if request.user.role == 'admin' %}bg-warning
+                        {% elif request.user.role == 'superadmin' %}bg-primary
+                        {% else %}bg-info{% endif %} text-dark">
+                        {{ request.user.role|upper }}
+                    </span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+                {% elif request.path != '/login/' %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+                {% endif %}
+            </div> -->
+        </div>
+    </nav>
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

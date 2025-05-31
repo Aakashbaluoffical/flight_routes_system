@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3 class="mb-4">Edit Task</h3>
+
+    {% if errors %}
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="nav nav-pills flex-column flex-sm-row">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <input type="text" name="airport_code" class="form-control" placeholder="Airport Code" required>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <input type="text" name="position" class="form-control" placeholder="Position" required>
+                    </div> -->
+                    <!-- <div class="col-md-2">
+                        <input type="text" name="duration" class="form-control" placeholder="duration" required>
+                    </div>
+                
+                    <div class="col-md-3">
+                        <input type="text" name="parent_port" class="form-control" placeholder="parent_port" required>
+                    </div> -->
+                    <!-- <div class="col-md-2">
+                        <select name="assigned_to" class="form-select" required>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div> -->
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100">search</button>
+                    </div>
+                </div>
+            </form>
+            
+           
+        </div>
+        <a href="{% url 'shortest_distance' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+
+
+
+{% endblock %}
