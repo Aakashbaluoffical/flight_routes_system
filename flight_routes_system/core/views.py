@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from .models.airport_models import Airports
 from .forms.forms import AirportForm
+from .utilities import find_distance_header
 
 
 
@@ -43,10 +43,6 @@ def search_port(request):
             return render(request, 'airport.html')  # custom 404 page
         
 
-
-
-
-        
         def find_child(ports,airport_code,position):
             for port in ports:
                 if port.parent_port == airport_code and port.position == position:
@@ -92,125 +88,69 @@ def search_port(request):
 
 
 
-def longest_distance(request):
-    airport_code = request.POST.get('airport_code')
-    position = request.POST.get('position')
-    
-    
-    ports = Airports.objects.filter(is_active=True)
 
-    if not ports:
-        return render(request, 'airport.html')  # custom 404 page
-    
-    
-    def find_child(ports,airport_code,position):
-        for port in ports:
-            if port.parent_port == airport_code and port.position == position:
-                print("portt",port)
-                return [{"airport_code":port.airport_code, "position":port.position,"duration":port.duration,"parent_port":port.parent_port}]
-            
-
-        return []
-
-
-
-    results = []
-    searching = True
-    
-    data = find_child(ports,airport_code,position)
-    
-    
-    if data :
-        
-        results.append(data)
-        print("resultsresultsresults[1sss]",results[0])
-        while searching:
-            print("data ++",results[0])
-            # print("datadatadatadatadatadata",data.airport_code)
-            # print("datadatadatadatadatadata",data.position)
-            datas = find_child(ports,results[0][0]['airport_code'],results[0][0]['position'])
-            print("hererere ",datas)
-            if not datas:
-                # print("datadatadatadatadatadata==========",results)
-                # print("datadatadatadatadatadata========",results )
-                return render(request,'airport.html' , {
-                                            'airports': results[0]
-                                        })
-            
-            # print("thissss",)
-            results.clear()
-            results.append(datas)
-            print("resultsresultsresults[0]",results[0])
-    else:
-        return render(request,'airport.html' , {
-                                            'airports': []
-                                        })
     
     
 
 
 
 def shortest_distance(request):
-    airport_code = request.POST.get('airport_code')
+    if request.method == 'POST':
+        left_distance, right_distance = find_distance_header(request)
 
+        result = left_distance if left_distance[0]['node_distance'] < right_distance[0]['node_distance'] else right_distance
+        print("====================================")
+        print(result)
+        print("====================================")
 
-    positions = ['left','right']
-    max_distance = 0
-    if positions[0] == 'left':
         
-        position = 'left'
-    
-        ports = Airports.objects.filter(is_active=True)
 
-        if not ports:
-            return render(request, 'airport.html')  # custom 404 page
-        
-        
-        def find_child(ports,airport_code,position):
-            for port in ports:
-                if port.parent_port == airport_code and port.position == position:
-                    print("portt",port)
-                    return [{"airport_code":port.airport_code, "position":port.position,"duration":port.duration,"parent_port":port.parent_port,"duration":port.duration}]
-                
+        return render(request,'airport.html' , {
+                                            'airports': result
+                                        })
+       
 
-            return []
+    return render(request,'shortest.html')
+        
 
+def longest_distance(request):
+    # if request.method == 'POST':
+    #     airport_code = request.POST.get('airport_code')
 
+    #     ports = Airports.objects.filter(is_active=True)
 
-        results = []
-        searching = True
+    #     if not ports:
+    #         return render(request, 'airport.html')  # custom 404 page
         
-        data = find_child(ports,airport_code,position)
-        max_distance +=data[0]['duration']
+    #     left_distance = find_lenght(request,ports,airport_code,'left')
+    #     right_distance = find_lenght(request,ports,airport_code,'right')
+
         
-        if data :
-            
-            results.append(data)
-            print("resultsresultsresults[1sss]",results[0])
-            while searching:
-                print("data ++",results[0])
-                # print("datadatadatadatadatadata",data.airport_code)
-                # print("datadatadatadatadatadata",data.position)
-                datas = find_child(ports,results[0][0]['airport_code'],results[0][0]['position'])
-                
-                print("hererere ",datas)
-                if not datas:
-                    # print("datadatadatadatadatadata==========",results)
-                    # print("datadatadatadatadatadata========",results )
-                    max_distance
-                    break
-                
-                
-                
-                # print("thissss",)
-                results.clear()
-                results.append(datas)
-                max_distance +=data[0]['duration']
-                print("resultsresultsresults[0]",results[0])
-        else:
-            max_distance
+    #     result = left_distance if left_distance[0]['node_distance'] > right_distance[0]['node_distance'] else right_distance
         
+    #     return render(request,'airport.html' , {
+    #                                         'airports': result
+    #                                     })
+       
+
+    # return render(request,'shortest.html')
+    if request.method == 'POST':
+        left_distance, right_distance = find_distance_header(request)
+
+        result = left_distance if left_distance[0]['node_distance'] > right_distance[0]['node_distance'] else right_distance
+        print("====================================")
+        print(result)
+        print("====================================")
+
         
+
+        return render(request,'airport.html' , {
+                                            'airports': result
+                                        })
+       
+
+    return render(request,'longest.html')
+           
  
 
 @require_http_methods(["GET", "POST"])
